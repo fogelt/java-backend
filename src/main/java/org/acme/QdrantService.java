@@ -2,6 +2,7 @@ package org.acme;
 
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
+import io.qdrant.client.grpc.Collections;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -36,6 +37,11 @@ public class QdrantService {
 
     public List<String> getCollections() throws ExecutionException, InterruptedException {
         return client.listCollectionsAsync().get();
+    }
+
+    public Collections.CollectionInfo getCollectionDetails(String collectionName)
+            throws ExecutionException, InterruptedException {
+        return client.getCollectionInfoAsync(collectionName).get();
     }
 
     @PreDestroy

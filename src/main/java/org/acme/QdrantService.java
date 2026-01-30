@@ -4,8 +4,12 @@ import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
@@ -20,13 +24,24 @@ public class QdrantService {
     @ConfigProperty(name = "qdrant.api-key")
     String apiKey;
 
-    public List<String> printCollections() throws Exception {
-        try (QdrantClient client = new QdrantClient(
+    private QdrantClient client;
+
+    @PostConstruct
+    void init() {
+        this.client = new QdrantClient(
                 QdrantGrpcClient.newBuilder(host, port, true)
                         .withApiKey(apiKey)
-                        .build())) {
-            List<String> collections = client.listCollectionsAsync().get();
-            return collections;
+                        .build());
+    }
+
+    public List<String> getCollections() throws ExecutionException, InterruptedException {
+        return client.listCollectionsAsync().get();
+    }
+
+    @PreDestroy
+    void cleanup() {
+        if (client != null) {
+            client.close();
         }
     }
 }

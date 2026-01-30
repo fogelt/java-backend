@@ -7,7 +7,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/test-qdrant")
+@Path("/qdrant")
 public class QdrantResource {
 
   @Inject
@@ -15,7 +15,7 @@ public class QdrantResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<String> trigger() throws Exception {
-    return qdrantService.printCollections();
+  public List<String> ServeCollections() throws Exception {
+    return qdrantService.getCollections();
   }
 }
